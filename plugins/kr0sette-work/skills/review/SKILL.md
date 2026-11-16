@@ -47,9 +47,10 @@ Don't run tests or lint; CI covers them.
 
 ## Verify before reporting
 
-- Try to disprove every finding: re-read the surrounding code and confirm the failure is reachable.
-- If it can't be disproved but you couldn't confirm it (external system, real data), mark the issue "Unverified" and say what to check.
-- If you can't name a concrete failure, drop it. That includes readability nits with no real way to mislead a reader or agent.
+Try to disprove every finding: re-read the surrounding code and confirm the failure is reachable.
+- If you confirm it, it's a finding and goes in the main table.
+- If it hinges on something you couldn't check (an external system's behavior, real data, infra outside the repo), it goes in the **Please verify** table. Say what to check and what breaks if it's wrong.
+- If you can't name a concrete failure either way, drop it. That includes readability nits with no real way to mislead a reader or agent.
 
 ## Output
 
@@ -64,11 +65,19 @@ Severity is one of:
 - **Nit:** minor and optional, but still real. Keep these few, and put them just above the test rows.
 
 - **Numbering:** number rows 1, 2, 3... in order so I can refer to them as #1, #2.
-- **Findings:** each row is one finding. Combine repeats across call sites into one row.
+- **Findings:** each row is one confirmed finding. Combine repeats across call sites into one row.
+- **Severity cell:** exactly one word: Critical, Suggestion or Nit.
 - **Unmet criteria:** add a row per missing or partial acceptance criterion.
 - **No recap:** don't list what you checked or found fine, and don't summarize the PR.
 - **No findings:** say "No changes needed." and nothing else.
-- **Verdict:** end with one line: `Block` if any row is Critical, otherwise `Approve`.
+- **Verdict:** a one-line `Block` (any Critical row) or `Approve`, placed after the Please verify section.
+
+## Please verify
+
+After the main table, list concerns you couldn't confirm, most costly first. Leave this section out if there are none. Number them as continuing rows (#N+1...).
+
+| # | File:line | What to check | What breaks if it's wrong |
+| --- | --- | --- | --- |
 
 ## Comments I'd add
 
