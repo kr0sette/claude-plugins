@@ -49,20 +49,26 @@ Don't run tests or lint; CI covers them.
 
 - Try to disprove every finding: re-read the surrounding code and confirm the failure is reachable.
 - If it can't be disproved but you couldn't confirm it (external system, real data), mark the issue "Unverified" and say what to check.
-- If you can't name a concrete failure, drop it.
+- If you can't name a concrete failure, drop it. That includes readability nits with no real way to mislead a reader or agent.
 
 ## Output
 
 One table, most critical to least critical, tests last. Terse; lead with the fix.
 
-| # | File:line | Issue | Why it matters | Suggested fix |
-| --- | --- | --- | --- | --- |
+| # | Severity | File:line | Issue | Why it matters | Suggested fix |
+| --- | --- | --- | --- | --- | --- |
+
+Severity is one of:
+- **Critical:** would cause a regression, bug, security hole, data loss, or a PR that misses the ticket. Blocks merge.
+- **Suggestion:** improves quality but isn't a failure: duplication, readability for agents, riders to drop or split, accessibility gaps.
+- **Nit:** minor and optional, but still real. Keep these few, and put them just above the test rows.
 
 - **Numbering:** number rows 1, 2, 3... in order so I can refer to them as #1, #2.
 - **Findings:** each row is one finding. Combine repeats across call sites into one row.
 - **Unmet criteria:** add a row per missing or partial acceptance criterion.
+- **No recap:** don't list what you checked or found fine, and don't summarize the PR.
 - **No findings:** say "No changes needed." and nothing else.
-- **Verdict:** end with one line: `Block` if any row is a regression, correctness, security or ticket-fit problem, otherwise `Approve`.
+- **Verdict:** end with one line: `Block` if any row is Critical, otherwise `Approve`.
 
 ## Comments I'd add
 
