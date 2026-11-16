@@ -1,0 +1,18 @@
+{
+  "name": "kr0sette",
+  "owner": { "name": "kr0sette" },
+  "metadata": { "description": "Personal Claude Code plugins by kr0sette" },
+  "plugins": [
+    {
+      "name": "kr0sette-work",
+      "source": "./plugins/kr0sette-work",
+      "description": "My work skills, starting with a code review",
+      "version": "0.1.0",
+      "author": { "name": "kr0sette" },
+      "homepage": "https://github.com/kr0sette/claude-plugins/tree/main/plugins/kr0sette-work",
+      "repository": "https://github.com/kr0sette/claude-plugins",
+      "keywords": ["review", "code-review", "kr0sette-work"],
+      "category": "development"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "kr0sette-work",
+  "version": "0.1.0",
+  "description": "My work skills, starting with a code review",
+  "author": { "name": "kr0sette" },
+  "homepage": "https://github.com/kr0sette/claude-plugins/tree/main/plugins/kr0sette-work",
+  "repository": "https://github.com/kr0sette/claude-plugins",
+  "keywords": ["review", "code-review", "kr0sette-work"]
+}
