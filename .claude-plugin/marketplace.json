@@ -7,7 +7,7 @@
       "name": "kr0sette-work",
       "source": "./plugins/kr0sette-work",
       "description": "My work skills, starting with a code review",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "author": { "name": "kr0sette" },
       "homepage": "https://github.com/kr0sette/claude-plugins/tree/main/plugins/kr0sette-work",
       "repository": "https://github.com/kr0sette/claude-plugins",

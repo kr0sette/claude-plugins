@@ -25,6 +25,11 @@ If the PR is in a Pendo backend repo (`pendo-appengine`, or a backend microservi
 1. PR title, body, labels, commits, full diff, CI status, and earlier reviews (don't ask to drop what an earlier review requested).
 2. The ticket: find the key in the branch, title or body, fetch it via the available tracker connector, and read what it asked for.
 3. Surrounding code, not just the hunks: callers of anything changed, and existing helpers that do the same thing.
+4. **Read code at the PR's head commit, never the local checkout** (it is often on `master` and has different line numbers).
+   - Get the head SHA: `gh pr view <n> --json headRefOid`.
+   - Read a file at that SHA: `gh api "repos/<owner>/<repo>/contents/<path>?ref=<sha>" --jq .content | base64 -d`, or `git show <sha>:<path>` after fetching.
+   - Only use the local files if the checkout is already on the PR's head commit.
+   - Every `File:line` must come from the PR head version, or from the diff's new-file line numbers.
 
 ## Priorities (highest first)
 
