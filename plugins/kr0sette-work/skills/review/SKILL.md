@@ -22,10 +22,14 @@ If the PR is in a Pendo backend repo (`pendo-appengine`, or a backend microservi
 
 ## Gather
 
-1. PR title, body, labels, commits, full diff, CI status, and earlier reviews (don't ask to drop what an earlier review requested).
-2. The ticket: find the key in the branch, title or body, fetch it via the available tracker connector, and read what it asked for.
-3. Surrounding code, not just the hunks: callers of anything changed, and existing helpers that do the same thing.
-4. **Read code at the PR's head commit, never the local checkout** (it is often on `master` and has different line numbers).
+1. PR title, body, labels, commits, full diff, and CI status.
+2. **Every existing comment, not just the review summaries.** Fetch all three:
+   - Inline threads, with resolved state: `gh api graphql` on `pullRequest.reviewThreads` (`isResolved`, `isOutdated`, `path`, `line`, `comments`).
+   - Review summaries: `gh pr view <n> --json reviews`.
+   - General PR comments: `gh pr view <n> --json comments`.
+3. The ticket: find the key in the branch, title or body, fetch it via the available tracker connector, and read what it asked for.
+4. Surrounding code, not just the hunks: callers of anything changed, and existing helpers that do the same thing.
+5. **Read code at the PR's head commit, never the local checkout** (it is often on `master` and has different line numbers).
    - Get the head SHA: `gh pr view <n> --json headRefOid`.
    - Read a file at that SHA: `gh api "repos/<owner>/<repo>/contents/<path>?ref=<sha>" --jq .content | base64 -d`, or `git show <sha>:<path>` after fetching.
    - Only use the local files if the checkout is already on the PR's head commit.
@@ -33,22 +37,35 @@ If the PR is in a Pendo backend repo (`pendo-appengine`, or a backend microservi
 
 ## Priorities (highest first)
 
-1. **Regressions to existing workflows.**
+1. **Architecture and approach.** Judge the overall design before the details.
+   - Is this the right approach for the goal, or is there a simpler or more fitting one?
+   - What else does it touch? Find other areas, inside and outside the card's scope, that could break or behave differently: shared code, callers, other services, config, data formats.
+   - Does it lay a good foundation for scaling, or does it box in future work (hardcoded cases, one-off paths, hidden coupling)?
+2. **Regressions to existing workflows.**
    - Shared code paths: confirm old flows behave as before.
    - Contracts: API shapes, stored formats, config defaults, deploy wiring.
-2. **Redundancy and readability, especially for other agents.**
+3. **Redundancy and readability, especially for other agents.**
    - Duplicated logic or an existing helper that should be reused.
    - Unclear names, noisy or wrong comments, and logic a reader could misread.
    - Suggest a consolidation or more scalable shape only when it's small, needs no big refactor, and doesn't derail the card's goal.
-3. **Riders and scope.** Changes the ticket doesn't need:
+4. **Riders and scope.** Changes the ticket doesn't need:
    - Riders that alter existing flows: recommend **drop**.
    - Standalone new work: recommend **split** into its own PR.
-4. **Ticket fit.** Acceptance criteria that are missing or only partly done.
-5. **Correctness and security.** Edge cases, swallowed errors, races, leaks, injection, missing authorization.
-6. **Accessibility** (frontend files only). Accessible names, labels, keyboard use, focus, color-only meaning.
-7. **Tests (absolute last).** Missing or weak coverage goes in the final rows.
+5. **Ticket fit.** Acceptance criteria that are missing or only partly done.
+6. **Correctness and security.** Edge cases, swallowed errors, races, leaks, injection, missing authorization.
+7. **Accessibility** (frontend files only). Accessible names, labels, keyboard use, focus, color-only meaning.
+8. **Tests (absolute last).** Missing or weak coverage goes in the final rows.
 
 Don't run tests or lint; CI covers them.
+
+## Existing comments
+
+Before writing any finding, compare it to every existing comment and thread.
+- **Never repeat a point already made**, whether the thread is open, resolved or outdated. Skip it, or reference it by thread if my take adds something new.
+- **Check each existing comment for validity**, unless it is Critical (a regression, bug, security hole or ticket miss).
+  - Re-read the code at the PR head and decide: **Valid** or **Not valid**, with a one-line reason.
+  - If the author already fixed it, say **Addressed**.
+- **Critical existing comments:** don't re-argue them. Note them as open or resolved so they count toward the verdict.
 
 ## Verify before reporting
 
@@ -83,6 +100,17 @@ After the main table, list concerns you couldn't confirm, most costly first. Lea
 
 | # | File:line | What to check | What breaks if it's wrong |
 | --- | --- | --- | --- |
+
+## Existing comments checked
+
+After Please verify, if the PR has non-Critical comments from others, list each with my validity check. Leave this section out if there are none.
+
+| Thread (author, File:line) | Status | Verdict | Reason |
+| --- | --- | --- | --- |
+
+- **Status:** open, resolved or outdated.
+- **Verdict:** Valid, Not valid or Addressed.
+- Critical existing comments go here too, with Verdict "Critical, open" or "Critical, resolved".
 
 ## Comments I'd add
 
