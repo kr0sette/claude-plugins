@@ -27,7 +27,10 @@ If the PR is in a Pendo backend repo (`pendo-appengine`, or a backend microservi
    - Inline threads, with resolved state: `gh api graphql` on `pullRequest.reviewThreads` (`isResolved`, `isOutdated`, `path`, `line`, `comments`).
    - Review summaries: `gh pr view <n> --json reviews`.
    - General PR comments: `gh pr view <n> --json comments`.
-3. The ticket: find the key in the branch, title or body, fetch it via the available tracker connector, and read what it asked for.
+3. **The ticket (required, don't skip):** find the key in the branch, title or body.
+   - If the tracker tools are deferred, load them with ToolSearch (query "jira get issue"), then fetch the ticket. Jira may also need the cloud ID from the accessible-resources tool first.
+   - Read the description and acceptance criteria.
+   - Only if the fetch truly fails, say so in one line at the top and continue.
 4. Surrounding code, not just the hunks: callers of anything changed, and existing helpers that do the same thing.
 5. **Read code at the PR's head commit, never the local checkout** (it is often on `master` and has different line numbers).
    - Get the head SHA: `gh pr view <n> --json headRefOid`.
@@ -62,10 +65,12 @@ Don't run tests or lint; CI covers them.
 
 Before writing any finding, compare it to every existing comment and thread.
 - **Never repeat a point already made**, whether the thread is open, resolved or outdated. Skip it, or reference it by thread if my take adds something new.
-- **Check each existing comment for validity**, unless it is Critical (a regression, bug, security hole or ticket miss).
+- **Include bot and human comments.** Both count as existing comments.
+- **Only check the Critical ones** (a regression, bug, security hole or ticket miss).
   - Re-read the code at the PR head and decide: **Valid** or **Not valid**, with a one-line reason.
   - If the author already fixed it, say **Addressed**.
-- **Critical existing comments:** don't re-argue them. Note them as open or resolved so they count toward the verdict.
+  - An open, valid Critical comment counts toward the verdict.
+- **Non-critical comments:** don't check or list them. Just don't repeat their points.
 
 ## Verify before reporting
 
@@ -90,9 +95,11 @@ Severity is one of:
 - **Findings:** each row is one confirmed finding. Combine repeats across call sites into one row.
 - **Severity cell:** exactly one word: Critical, Suggestion or Nit.
 - **Unmet criteria:** add a row per missing or partial acceptance criterion.
-- **No recap:** don't list what you checked or found fine, and don't summarize the PR.
+- **No recap:** never write a "checked and fine" or "no issues in..." list, in any form, and don't summarize the PR.
+- **Architecture line:** start the output with one line: `Architecture:` followed by the main concern, or "no concerns". Then the table.
+- **Closing line:** don't say anything about posting, drafts or what you did not do.
 - **No findings:** say "No changes needed." and nothing else.
-- **Verdict:** a one-line `Block` (any Critical row) or `Approve`, placed after the Please verify section.
+- **Verdict:** goes at the very bottom of the whole output (see "Verdict" below).
 
 ## Please verify
 
@@ -103,14 +110,14 @@ After the main table, list concerns you couldn't confirm, most costly first. Lea
 
 ## Existing comments checked
 
-After Please verify, if the PR has non-Critical comments from others, list each with my validity check. Leave this section out if there are none.
+After Please verify, list only the Critical existing comments (bot or human) with my validity check. Leave this section out if there are none.
 
 | Thread (author, File:line) | Status | Verdict | Reason |
 | --- | --- | --- | --- |
 
 - **Status:** open, resolved or outdated.
 - **Verdict:** Valid, Not valid or Addressed.
-- Critical existing comments go here too, with Verdict "Critical, open" or "Critical, resolved".
+- Don't list non-critical comments, bot commands or status messages.
 
 ## Comments I'd add
 
@@ -123,9 +130,13 @@ After the table, list the review comments I would post, as a second table:
 - Only lines inside the diff.
 - Terse, solution-focused, no commit hashes.
 
+## Verdict
+
+The last line of the output, after every table: `Block` if any row is Critical or a Critical existing comment is still open, otherwise `Approve`. Nothing comes after it.
+
 ## Rules
 
-- **Draft only.** Never post, approve, comment or resolve on GitHub unless I explicitly say so.
+- **Draft only.** Never post, approve, comment or resolve on GitHub unless I explicitly say so. Don't mention this in the output.
 - **Stay in scope.** Don't flag pre-existing issues unrelated to the change.
 - **Terse.** Plain words, no filler.
 
